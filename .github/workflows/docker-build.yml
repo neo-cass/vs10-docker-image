@@ -3,71 +3,78 @@ name: docker
 on:
   push:
     branches: ["**"]
-    tags: ["**"]
+    tags: ["v*"]
   workflow_dispatch:
+
+env:
+  IMAGE_NAME: docker.io/neocass/vs10-build-tools
 
 jobs:
   docker_build:
     # windows-2022 (NOT windows-latest): the host kernel must match the
     # ltsc2022 base image so Docker can use process isolation. Hosted runners
     # have no nested virtualization, so Hyper-V isolation is unavailable and a
-    # kernel mismatch (e.g. windows-2025 host) fails the build.
+    # kernel mismatch (e.g. a windows-2025 host) fails the build.
     runs-on: windows-2022
-    # GitHub-hosted jobs are hard-capped at 6h; the GitLab `timeout: 10h`
-    # cannot be honoured here. Only a self-hosted runner (5-day cap) can.
+    # GitHub-hosted jobs are hard-capped at 6h regardless of this value.
     timeout-minutes: 350
-
-    permissions:
-      contents: read
-      packages: write
-
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_REPO: ${{ github.repository }}
 
     steps:
       - name: Free up disk space
         shell: pwsh
         run: |
-          # Standard hosted runners ship ~14 GB free; the image needs far more.
-          # Drop the pre-cached .NET Framework container images to reclaim space.
-          docker system df
+          # Standard hosted runners ship ~14 GB free. Drop the pre-cached
+          # .NET Framework container images to reclaim several GB.
           docker image prune -a -f
           Get-PSDrive C | Select-Object Used, Free
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # repo carries ~3.7 GB of VS2010 payload; don't also pull history
           fetch-depth: 1
+          # REQUIRED: without this the VS2010 installers arrive as LFS pointer
+          # files and Docker COPY would bake 130-byte stubs into the image.
+          lfs: true
 
-      - name: Compute image tag
-        shell: pwsh
-        run: |
-          # docker tags can't contain "/", which branch names may
-          $tag = "${{ github.ref_name }}" -replace '[^A-Za-z0-9._-]', '-'
-          "IMAGE_NAME=$env:REGISTRY/$($env:IMAGE_REPO.ToLower()):$tag" | Out-File -FilePath $env:GITHUB_ENV -Append
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=sha,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Log in to registry
-        shell: pwsh
-        run: docker login $env:REGISTRY -u "${{ github.actor }}" -p "${{ secrets.GITHUB_TOKEN }}"
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # Buildx/BuildKit cannot build Windows containers, so build-push-action
+      # is not usable here; the classic builder is the supported path.
       - name: Build
         shell: pwsh
-        run: docker build -t "$env:IMAGE_NAME" .
+        run: |
+          $buildArgs = @()
+          "${{ steps.meta.outputs.tags }}".Split("`n") |
+            Where-Object { $_ } | ForEach-Object { $buildArgs += @("-t", $_.Trim()) }
+          "${{ steps.meta.outputs.labels }}".Split("`n") |
+            Where-Object { $_ } | ForEach-Object { $buildArgs += @("--label", $_.Trim()) }
+          docker build @buildArgs .
 
       - name: Push
         shell: pwsh
-        run: docker push "$env:IMAGE_NAME"
+        run: |
+          "${{ steps.meta.outputs.tags }}".Split("`n") |
+            Where-Object { $_ } | ForEach-Object { docker push $_.Trim() }
 
-      - name: Remove local image
+      - name: Clean up local image
         if: always()
         shell: pwsh
         run: |
-          docker rmi -f "$env:IMAGE_NAME" 2>$null
+          "${{ steps.meta.outputs.tags }}".Split("`n") |
+            Where-Object { $_ } | ForEach-Object { docker rmi -f $_.Trim() 2>$null }
           exit 0
-
-      - name: Log out
-        if: always()
-        shell: pwsh
-        run: docker logout $env:REGISTRY
