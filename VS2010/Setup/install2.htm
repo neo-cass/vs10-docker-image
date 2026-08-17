@@ -1,0 +1,397 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML id="install2.htm_64"><HEAD id="install2.htm_70"><TITLE id="install2.htm_76">Visual Studio Setup is complete</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=utf-8" id="install2.htm_124">
+<style type="text/css">
+    body
+    {
+      margin: 0px;
+      padding:0px;
+      font-family: Verdana;
+      font-size: 0.75em;
+      color: #000;
+    }
+    p
+    {
+      padding: 3px 0px 3px 0px;
+      margin: 3px 0px 3px 0px;
+    }
+    a, a:hover, a:active, a:visited
+    {
+      color: #2178e0;
+      text-decoration: none;
+    }
+    h1, h2, h3, h4, h5, h6
+    {
+      margin: 0px 0px 3px 0px;
+      padding: 0px 0px 3px 0px;
+    }
+    ul
+    {
+      margin: 0px 0px 15px 20px;
+      list-style: none;
+    }
+    li
+    {
+      margin: 3px 0px 3px 0px;
+      padding: 0px;
+    }
+    .grayText
+    {
+      color: #707070;
+      font-size: 0.95em;
+    }
+    .normalText
+    {
+      font-size: 0.83em;
+    }
+    .mediumText
+    {
+      font-size: 0.9em;
+    }
+    .smallerText
+    {
+      font-size:0.8em;
+    }
+  </style>
+</HEAD>
+
+
+<SCRIPT type="text/javascript" language="javascript" id="install2.htm_355">
+<!--
+  var strInput;
+  var strRemainingInput;
+  var strPath;
+  var strLogName;
+  var strErrLogName;
+  var strErrors;
+  var strRollback;
+  var strReadmePath;
+  var strLibraryManager;
+  var strLibraryManagerCL;
+  var i;
+  var strErrorAnchor;
+  var strInstallAnchor;
+  var strWowFlag;
+  var optErrorFlag;
+  var depCheckFlag;
+
+  strInput=window.location.search.substring(1,window.location.search.length);
+  strInput = String(strInput.replace(/%2520/g,"%20"));
+
+  // 1st argument (strErrors); 0/1/u No errors, with errors, upgrade
+  i=strInput.indexOf(";");
+  strErrors=strInput.substring(0,i);
+  strRemainingInput=strInput.substring(i+1,strInput.length);
+  i=strErrors.indexOf("=");
+  strErrors=strErrors.substring(i+1,i+2);
+  
+  // 2nd argument (strLogName); VS Setup log filename
+  i=strRemainingInput.indexOf(";");
+  strLogName=strRemainingInput.substring(0,i);
+  strRemainingInput=strRemainingInput.substring(i+1,strInput.length);
+  i=strLogName.indexOf("=");
+  strLogName=strLogName.substring(i+1,strLogName.length);
+  
+  // 3rd argument (strErrLogName); VS Setup error log filename
+  i=strRemainingInput.indexOf(";");
+  strErrLogName=strRemainingInput.substring(0,i);
+  strRemainingInput=strRemainingInput.substring(i+1,strInput.length);
+  i=strErrLogName.indexOf("=");
+  strErrLogName=strErrLogName.substring(i+1,strErrLogName.length);
+  
+  // 4th argument (strPath); path to VS Setup logs
+  i=strRemainingInput.indexOf(";");
+  strPath=strRemainingInput.substring(0,i);
+  strRemainingInput=strRemainingInput.substring(i+1,strInput.length);
+  i=strPath.indexOf("=");
+  strPath=strPath.substring(i+1,strPath.length);
+  
+  // 5th argument (strRollback); Setup was rolled back (0/1)
+  i=strRemainingInput.indexOf("=");
+  strRollback=strRemainingInput.substring(i+1,i+2);
+  strRemainingInput=strRemainingInput.substring(i+3,strInput.length);
+  
+  // 6th argument (strReadmePath); path to suppoting image files
+  i=strRemainingInput.indexOf(";");
+  strReadmePath=strRemainingInput.substring(0,i);
+  strRemainingInput=strRemainingInput.substring(i+1,strInput.length);
+  i=strReadmePath.indexOf("=");
+  strReadmePath=strReadmePath.substring(i+1,strReadmePath.length);
+
+  // 7th argument (strLibraryManager) path to Help Exp library manager
+  i=strRemainingInput.indexOf(";");
+  strLibraryManager=strRemainingInput.substring(0,i);
+  strRemainingInput=strRemainingInput.substring(i+1,strInput.length);
+  i=strLibraryManager.indexOf("=");
+  strLibraryManager=strLibraryManager.substring(i+1,strLibraryManager.length);
+  
+  // 8th argument (strInstallSource) is the INSTALLSOURCE 
+  i=strRemainingInput.indexOf(";");
+  strInstallSource=strRemainingInput.substring(0,i);
+  strRemainingInput=strRemainingInput.substring(i+1,strInput.length);
+  i=strInstallSource.indexOf("=");
+  strInstallSource=strInstallSource.substring(i+1,strInstallSource.length);
+  
+function ProdDocOnclick()
+{
+    window.location.href = "ms-xhelp:///" + strLibraryManagerCL + "\"" + strInstallSource + "/../ProductDocumentation/helpcontentsetup.msha" + "\"";
+}
+       
+  i=strRemainingInput.indexOf("=");
+  strWowFlag=strRemainingInput.substring(i+1,i+2);
+  strRemainingInput=strRemainingInput.substring(i+3,strInput.length);
+  
+  // Look at remaining input and try to find OptError and Depcheck
+  var optErrorString = "opterror=";
+  var depCheckString = "depcheck=";
+  strRemainingInput = strRemainingInput.toLowerCase();
+
+  var optError = strRemainingInput.toLowerCase().match(optErrorString);
+  if (optError)
+  {
+    i=strRemainingInput.indexOf(optErrorString)+(optErrorString.length)-1;
+    optErrorFlag=strRemainingInput.substring(i+1,i+2);
+  }
+
+  var depcheck = strRemainingInput.toLowerCase().match(depCheckString);
+  if (depcheck)
+  {
+    i=strRemainingInput.indexOf("depcheck=")+(depCheckString.length)-1;
+    depCheckFlag = strRemainingInput.substring(i+1,i+2);
+  }
+
+  //Get rid of space esc (%20)
+  spaces = new RegExp("\%20", "g");
+  strPath = strPath.replace(spaces , " ");
+  strReadmePath = strReadmePath.replace(spaces , " ");
+  strLibraryManager = strLibraryManager.replace(spaces , " ");
+
+  // Security precaution
+  forbiddenChars = new RegExp("[<>\'\"]", "g");  // Global search/replace
+  strPath = strPath.replace(forbiddenChars, "");
+  strReadmePath = strReadmePath.replace(forbiddenChars, "");
+
+  var strDocVersion="100";
+  var strDocProduct="VS";
+  
+  // requires localization
+  var strDocLocale="en-us";
+  var strHelpReadmeLocale="ENG";
+  var strHelpReadme= strLibraryManager + "Readme_" + strHelpReadmeLocale + ".htm";
+
+  strLibraryManagerCL = "?install=1&product=" + strDocProduct + "&version=" + strDocVersion + "&locale=" + strDocLocale + "&brandingPackage=dev10.mshc&sourceWeb=http://services.mtps.microsoft.com/ServiceAPI/products/&sourceMedia="; 
+  
+  
+  if ( strErrors=="u" || strErrors==0 && ! optErrorFlag )
+  {
+    document.write("<table style=\"padding: 0px 20px 0px 20px;\" cellpadding='0' cellspacing='0'>");
+    document.write("<tr align='left' valign='top'><td style='width: 48%; padding-right: 10px; margin-right: 10px;'><div style='margin-top: 15px;'> ");
+
+    if (strErrors=="u")
+    {
+      document.write("<h2 style='color: #439312;'>Upgrade complete.</h2>");
+      document.write("<p style='margin: 0px; padding: 0px;' class='normalText'>");
+      document.write("You have successfully upgraded from trial edition of Visual Studio 2010.");
+    }
+    else
+    {
+      document.write("<h2 style='color: #439312;'>Success</h2>");
+      document.write("<p style='margin: 0px; padding: 0px;' class='normalText'>");
+      document.write("Visual Studio 2010 has been installed and setup is complete.");
+    }
+    document.write("</p></div></td><td style='width: 52%; padding-right: 30px;'>");
+    document.write("<div style='margin-top: 20px;' class='normalText'>");
+    document.write("<p>");
+    document.write("<img alt='' src='file:///"+strReadmePath+"/info-icon.png'");
+    document.write(" style='vertical-align:middle; padding-right:5px; margin-right: 5px;' />");
+    document.write("<span style='font-weight: bold'>");
+    document.write("Security Notice:");
+    document.write("</span>&nbsp;");
+    document.write("Highly Recommended");
+    document.write("</p>");
+
+    // Windows Update
+    document.write("<p><span class='grayText'>It is also recommended that you choose to opt in to the <a target='_blank' href='http://update.microsoft.com/microsoftupdate'>Microsoft Update</a> service to make sure you receive all the available updates for this and other Microsoft products.</span></p>");
+    
+    // Bullet List
+    document.write("<ul style='margin-top: 0; list-style: none;'>");
+    document.write("<li style='margin-bottom: 0; margin-top: 0; background-image: url(file:///" + strReadmePath + "/bullet.png); background-repeat:no-repeat; background-position: 0px 5px; padding-left: 15px; margin-left:-20px'>");
+    document.write("Read the ");
+    document.write("<a target='_blank' href='file:///" + strReadmePath + "/securitynotes.htm'>");
+    document.write("security notes</a></li>");
+    document.write("<li style='margin-bottom: 0; margin-top: 0; background-image: url(file:///" + strReadmePath + "/bullet.png); background-repeat:no-repeat; background-position: 0px 5px; padding-left: 15px; margin-left:-20px'>");
+    document.write("View the ");
+    document.write("<a target='_blank' href='file:///" + strReadmePath + "/readme.htm'>");
+    document.write("readme notes</a></li>");
+    document.write("<li style='margin-bottom: 0; margin-top: 0; background-image: url(file:///" + strReadmePath + "/bullet.png); background-repeat:no-repeat; background-position: 0px 5px; padding-left: 15px; margin-left:-20px'>");
+    document.write("Examine the ");
+    document.write("<a target='_blank' href='file:///" + strPath + "/" + strLogName +"'>" );
+    document.write(" installation log</a></li></ul>");
+
+    // Visual Studio Gallery
+    document.write("<h3 style='margin-bottom: 0;'>Fill up your tool box.</h3>");
+    document.write("<p style='margin: 0px; padding: 0px;'>Install extensions from the <a target='_blank' href='http://go.microsoft.com/fwlink/?LinkId=169676'>Visual Studio Gallery</a> that integrate with Visual Studio to further enhance your development productivity.</p>");
+
+    // Help Library Manager
+    document.write("<h3 style='margin-bottom: 0; margin-top: 1em;'>Help is just a click away!</h3>");
+    document.write("<p style='margin: 0px; margin-top: 0em; padding: 0px;'>Clicking the button below will launch the Help Library Manager which will guide you through configuring local help for Visual Studio.&nbsp;");
+    document.write("<a target='_blank' href='file:///" + strHelpReadme +"'>" );
+    document.write("More info...</a></p>");
+    document.write("<div style='margin-top: 0.2em; text-align=right; padding-right: 40px;'>");
+    document.write("<INPUT type=\'image\' src=\"file:///" + strReadmePath + "/install_button.png\" name=\"productdocs\" onClick=\"ProdDocOnclick()\" accesskey='D'></div>");
+    document.write("</div></td></tr></table>");
+  }
+
+  if (optErrorFlag == 1)
+  {
+    document.write("<table style='padding: 0px 5px 0px 5px;' cellpadding='0' cellspacing='0'><tr align='left' valign='top'>");
+    document.write("<td style='padding-right: 5px;' class='smallerText'><div style='margin-top: 5px; margin-bottom: 5px;'>");
+    document.write("<h2 style='color: #ffa521; display: inline;'>Success</h2></div>");
+    document.write("<p>");
+    document.write("<img alt='' src='file:///" + strReadmePath + "/big-info.png'");
+    document.write(" style='vertical-align: middle; padding-right: 7px; float: left;' /><span style='color: #ce311d;'>Setup completed, however, there were failures reported installing optional components.</span></p>");
+    document.write("<p>Review the ");
+    document.write("<a target='_blank' href='file:///" + strPath + "/" + strErrLogName + "'");
+    document.write("'/>Error Log</a> for the list of failed optional components.</p>");
+    
+    // Windows Update
+    document.write("<p><span class='grayText'>It is also recommended that you choose to opt in to the <a target='_blank' href='http://update.microsoft.com/microsoftupdate'>Microsoft Update</a> service to make sure you receive all the available updates for this and other Microsoft products.</span></p>");
+    
+    // Bullet List
+    document.write("<ul style='margin-top: 0; list-style: none;'>");
+    document.write("<li style='margin-bottom: 0; margin-top: 0; background-image: url(file:///" + strReadmePath + "/bullet.png); background-repeat:no-repeat; background-position: 0px 5px; padding-left: 15px; margin-left:-20px'>");
+    document.write("Read the ");
+    document.write("<a target='_blank' href='file:///" + strReadmePath + "/securitynotes.htm'>");
+    document.write("security notes</a></li>");
+    document.write("<li style='margin-bottom: 0; margin-top: 0; background-image: url(file:///" + strReadmePath + "/bullet.png); background-repeat:no-repeat; background-position: 0px 5px; padding-left: 15px; margin-left:-20px'>");
+    document.write("View the ");
+    document.write("<a target='_blank' href='file:///" + strReadmePath + "/readme.htm'>");
+    document.write("readme notes</a></li>");
+    document.write("<li style='margin-bottom: 0; margin-top: 0; background-image: url(file:///" + strReadmePath + "/bullet.png); background-repeat:no-repeat; background-position: 0px 5px; padding-left: 15px; margin-left:-20px'>");
+    document.write("Examine the ");
+    document.write("<a target='_blank' href='file:///" + strPath + "/" + strLogName + "'>");
+    document.write(" installation log</a></li></ul>");
+
+    // Visual Studio Gallery
+    document.write("<p style='margin: 0px; padding: 0px;'><b>Fill up your tool box.</b><br/>");
+    document.write("Install extensions from the <a target='_blank' href='http://go.microsoft.com/fwlink/?LinkId=169676'>Visual Studio Gallery</a> that integrate with Visual Studio to further enhance your development productivity.</p>");
+
+    // Help Library Manager
+    document.write("<p style='margin: 0px; margin-top: 1em; padding: 0px;'><b>Help is just a click away!</b><br/>Clicking the button below will launch the Help Library Manager which will guide you through configuring local help for Visual Studio.&nbsp;");
+    document.write("<a target='_blank' href='file:///" + strHelpReadme + "'>");
+    document.write("More info...</a></p>");
+    document.write("<div style='margin-top: 0.2em; text-align=right; padding-right: 40px;'>");
+    document.write("<INPUT type=\'image\' src=\"file:///" + strReadmePath + "/install_button.png\" name=\"productdocs\" onClick=\"ProdDocOnclick()\" accesskey='D'></div>");
+
+    document.write("</td></tr></table>");
+  }
+
+
+  if (strErrors == 1 && !optErrorFlag) 
+  {
+    document.write("<table style='padding: 0px 5px 0px 5px;' cellpadding='0' cellspacing='0'><tr align='left' valign='top'>");
+    document.write("<td style='padding-right: 5px;' class='smallerText'><div style='margin-top: 5px; margin-bottom: 5px;'>");
+    document.write("<h2 style='color: #439312; display: inline;'>Success</h2></div>");
+    if (strRollback == 1) 
+    {
+      document.write("<p>");
+      document.write("<img alt='' src='file:///" + strReadmePath + "/big-info.png'");
+      document.write(" style='vertical-align: middle; padding-right: 7px; float: left;' /><span style='color: #520484;'>");
+
+      document.write("Warnings were generated during setup</span>, causing installation to roll back.</b><br>Setup has returned the computer to the state before installation started, all Visual Studio 2010 files have been removed.<br><br>");
+    }
+    else 
+    {
+      document.write("<span style='margin: 0px; padding: 0px 0px 0px 15px;'>Visual Studio 2010 setup is complete.</span></div>");
+      document.write("<p>");
+      document.write("<img alt='' src='file:///" + strReadmePath + "/big-info.png'");
+      document.write(" style='vertical-align: middle; padding-right: 7px; float: left;' />");
+      document.write("Setup completed, however, some warnings were detected.");
+    }
+
+
+    document.write("<p>Review the ");
+    document.write("<a target='_blank' href='file:///" + strPath + "/" + strErrLogName + "'");
+    document.write("'/>Error Log</a>.</p>");
+
+    // Windows Update
+    document.write("<p><span class='grayText'>It is also recommended that you choose to opt in to the <a target='_blank' href='http://update.microsoft.com/microsoftupdate'>Microsoft Update</a> service to make sure you receive all the available updates for this and other Microsoft products.</span></p>");
+
+    // Bullet List
+    document.write("<ul style='margin-top: 0; list-style: none;'>");
+    document.write("<li style='margin-bottom: 0; margin-top: 0; background-image: url(file:///" + strReadmePath + "/bullet.png); background-repeat:no-repeat; background-position: 0px 5px; padding-left: 15px; margin-left:-20px'>");
+    document.write("Read the ");
+    document.write("<a target='_blank' href='file:///" + strReadmePath + "/securitynotes.htm'>");
+    document.write("security notes</a></li>");
+    document.write("<li style='margin-bottom: 0; margin-top: 0; background-image: url(file:///" + strReadmePath + "/bullet.png); background-repeat:no-repeat; background-position: 0px 5px; padding-left: 15px; margin-left:-20px'>");
+    document.write("View the ");
+    document.write("<a target='_blank' href='file:///" + strReadmePath + "/readme.htm'>");
+    document.write("readme notes</a></li>");
+    document.write("<li style='margin-bottom: 0; margin-top: 0; background-image: url(file:///" + strReadmePath + "/bullet.png); background-repeat:no-repeat; background-position: 0px 5px; padding-left: 15px; margin-left:-20px'>");
+    document.write("Examine the ");
+    document.write("<a target='_blank' href='file:///" + strPath + "/" + strLogName + "'>");
+    document.write(" installation log</a></li></ul>");
+
+    // Visual Studio Gallery
+    document.write("<p style='margin: 0px; padding: 0px;'><b>Fill up your tool box.</b><br/>");
+    document.write("Install extensions from the <a target='_blank' href='http://go.microsoft.com/fwlink/?LinkId=169676'>Visual Studio Gallery</a> that integrate with Visual Studio to further enhance your development productivity.</p>");
+
+    // Help Library Manager
+    document.write("<p style='margin: 0px; margin-top: 1em; padding: 0px;'><b>Help is just a click away!</b><br/>Clicking the button below will launch the Help Library Manager which will guide you through configuring local help for Visual Studio.&nbsp;");
+    document.write("<a target='_blank' href='file:///" + strHelpReadme + "'>");
+    document.write("More info...</a></p>");
+    document.write("<div style='margin-top: 0.2em; text-align=right; padding-right: 40px;'>");
+    document.write("<INPUT type=\'image\' src=\"file:///" + strReadmePath + "/install_button.png\" name=\"productdocs\" onClick=\"ProdDocOnclick()\" accesskey='D'></div>");
+
+    document.write("</td></tr></table>");
+  }
+
+
+-->
+</SCRIPT>
+<NOSCRIPT id="install2.htm_11339">
+  <table style="padding: 0px 20px 0px 20px;"
+    cellpadding="0" cellspacing="0">
+    <tr align="left" valign="top">
+      <td style="width: 48%; padding-right: 0px; margin-right: 0px;">
+        <div style="margin-top: 15px; padding-right:120px; width: 180px;">
+          <h2 style="color: #439312;">
+            Success</h2>
+          <p style="margin: 0px; padding: 0px;" class="normalText">
+            Visual Studio 2010 has been installed and setup is complete.</p>
+        </div>
+      </td>
+      <td style="width: 52%; padding-right: 30px;">
+        <div style="margin-top: 20px; border-bottom: solid 1px #e1e1e1;" class="normalText">
+          <p>
+            <img alt="" src="info-icon.png" style="vertical-align:middle; padding-right:7px;" />
+            <span style="color: #ce311d; font-weight: bold">Security Notice:</span>&nbsp;<span
+              style="font-weight: bold" class="grayText">*Highly Recommended</span>
+          </p>
+          <p>
+            <span class="grayText">It is also recommended that you choose to opt in to the Microsoft
+              Update service to make sure you receive all the available updates for this and other
+              Microsoft products. You can do so by visiting this site: <a target='_blank' href="http://update.microsoft.com/microsoftupdate">
+                http://update.microsoft.com/microsoftupdate</a> </span>
+          </p>
+          <ul style="list-style-image: url(bullet.png); list-style-position:" class="normalText">
+            <li>Read the Visual Studio 2010 <a target='_blank' href="file:///"+strReadmePath+"/securitynotes.htm">Security Notes</a>.</li>
+            <li>View the <a target='_blank' href="">readme notes</a>.</li>
+            <li style="list-style-image: none; list-style-type: none;">Examine the <a target='_blank' href="">
+              installation log</a> file.</li>
+          </ul>
+        </div>
+        <div class="normalText" style="margin-top: 50px">
+          <h3>
+            Help is just a click away!</h3>
+          <p style="margin: 0px; padding: 0px;">
+            To install local Help content, select Start, All Programs, Microsoft Visual Studio 2010, Visual Studio Tools, and then select the Manage Help Settings option.
+        </div>
+      </td>
+    </tr>
+  </table>
+
+</NOSCRIPT>
+</SPAN>
+</BODY>
+</HTML>

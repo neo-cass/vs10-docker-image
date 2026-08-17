@@ -1,0 +1,213 @@
+﻿<html id="failed.htm_0">
+<head id="failed.htm_8">
+<title id="failed.htm_16">Visual Studio Install Failure: Remediation Steps</title>
+</head>
+<body vLink=purple link=blue bgColor=white id="failed.htm_90"><BASEFONT face="Verdana" color="navy" size="2" id="failed.htm_133">
+<META http-equiv=Content-Type content="text/html; charset=utf-8" id="install2.htm_124">
+<style type="text/css">
+    body
+    {
+      margin: 0px;
+      padding:0px;
+      font-family: Verdana;
+      font-size: 0.75em;
+      color: #000;
+    }
+    p
+    {
+      padding: 3px 0px 3px 0px;
+      margin: 3px 0px 3px 0px;
+    }
+    a, a:hover, a:active, a:visited
+    {
+      color: #2178e0;
+      text-decoration: none;
+    }
+    h1, h2, h3, h4, h5, h6
+    {
+      margin: 0px 0px 3px 0px;
+      padding: 0px 0px 3px 0px;
+    }
+    ul
+    {
+      margin: 0px 0px 15px 20px;
+      list-style: none;
+    }
+    li
+    {
+      margin: 5px 0px 5px 0px;
+      padding: 0px;
+    }
+    .grayText
+    {
+      color: #999;
+      font-size: 0.95em;
+    }
+    .normalText
+    {
+      font-size: 0.83em;
+    }
+    .mediumText
+    {
+      font-size: 0.9em;
+    }
+    .smallerText
+    {
+      font-size:0.8em;
+    }
+  </style>
+
+<script language="JScript" id="failed.htm_186">
+  var strInput;
+  var strRemainingInput;
+  var strPath;
+  var strErrors;
+  var strRollback;
+  var strReadmePath;
+  var i;
+  var strErrorAnchor;
+  var strInstallAnchor;
+  var strWowFlag;
+  var strOptError;
+  var strDepCheck;
+  var strLogName;
+  var strErrLogName;
+
+
+  strInput = window.location.search.substring(1, window.location.search.length);
+
+  // 1st argument (strErrors); 0/1/u No errors, with errors, upgrade
+  i = strInput.indexOf(";");
+  strErrors = strInput.substring(0, i);
+  strRemainingInput = strInput.substring(i + 1, strInput.length);
+  i = strErrors.indexOf("=");
+  strErrors = strErrors.substring(i + 1, i + 2);
+
+  // 2nd argument (strLogName); VS Setup log filename
+  i = strRemainingInput.indexOf(";");
+  strLogName = strRemainingInput.substring(0, i);
+  strRemainingInput = strRemainingInput.substring(i + 1, strInput.length);
+  i = strLogName.indexOf("=");
+  strLogName = strLogName.substring(i + 1, strLogName.length);
+
+  // 3rd argument (strErrLogName); VS Setup error log filename
+  i = strRemainingInput.indexOf(";");
+  strErrLogName = strRemainingInput.substring(0, i);
+  strRemainingInput = strRemainingInput.substring(i + 1, strInput.length);
+  i = strErrLogName.indexOf("=");
+  strErrLogName = strErrLogName.substring(i + 1, strErrLogName.length);
+
+  // 4th argument (strPath); path to VS Setup logs
+  i = strRemainingInput.indexOf(";");
+  strPath = strRemainingInput.substring(0, i);
+  strRemainingInput = strRemainingInput.substring(i + 1, strInput.length);
+  i = strPath.indexOf("=");
+  strPath = strPath.substring(i + 1, strPath.length);
+
+  // 5th argument (strRollback); Setup was rolled back (0/1)
+  i = strRemainingInput.indexOf("=");
+  strRollback = strRemainingInput.substring(i + 1, i + 2);
+  strRemainingInput = strRemainingInput.substring(i + 3, strInput.length);
+
+  // 6th argument (strReadmePath); path to suppoting image files
+  i = strRemainingInput.indexOf(";");
+  strReadmePath = strRemainingInput.substring(0, i);
+  strRemainingInput = strRemainingInput.substring(i + 1, strInput.length);
+  i = strReadmePath.indexOf("=");
+  strReadmePath = strReadmePath.substring(i + 1, strReadmePath.length);
+
+  // 7th argument (strLibraryManager) path to Help Exp library manager
+  i = strRemainingInput.indexOf("=");
+  strWowFlag = strRemainingInput.substring(i + 1, i + 2);
+
+  // Look at remaining input and try to find OptError and Depcheck
+  var optErrorString = "opterror=";
+  var depCheckString = "depcheck=";
+
+  strRemainingInput = strRemainingInput.toLowerCase();
+
+  var optError = strRemainingInput.toLowerCase().match(optErrorString);
+  if (optError)
+  {
+    i = strRemainingInput.indexOf(optErrorString) + (optErrorString.length) - 1;
+    optErrorFlag = strRemainingInput.substring(i + 1, i + 2);
+  }
+
+  var depcheck = strRemainingInput.toLowerCase().match(depCheckString);
+  if (depcheck)
+  {
+    i = strRemainingInput.indexOf("depcheck=") + (depCheckString.length) - 1;
+    strDepCheckFlag = strRemainingInput.substring(i + 1, i + 2);
+  }
+
+  // Security precaution
+  forbiddenChars = new RegExp("[<>\'\"]", "g"); // Global search/replace
+  strPath = strPath.replace(forbiddenChars, "");
+  strReadmePath = strReadmePath.replace(forbiddenChars, "");
+
+  document.write("<table style='padding: 0px 5px 0px 5px;' cellpadding='0' cellspacing='0'><tr align='left' valign='top'>");
+  document.write("<td style='padding-right: 10px;' class='smallerText'><div style='margin-top: 5px; margin-bottom: 10px;'>");
+  document.write("<img alt='' src='file:///" + strReadmePath + "/smallfail.gif' ");
+  document.write("style='vertical-align: baseline; padding-right: 7px; float:left;' />"); document.write("<h2 style='color: #ce311d; display: inline;'>");
+  document.write("Setup Failed</h2>");
+
+
+  if (strErrors == 1)
+  {
+    document.write("<span style='margin: 0px; padding: 0px 0px 0px 15px;'>There were errors during setup.</span></div>");
+    document.write("<div style='float:left; margin-top:-10px; margin-left:20px;'><br><p>");
+
+    if (strRollback == 1)
+    {
+      document.write("Warnings were generated during setup and Visual Studio 2010 has not been installed nor updated.<br><br>(Prerequisites remain installed.)");
+    }
+    else
+    {
+      document.write("Although some components were installed successfully, errors were detected. ");
+    }
+    document.write("&nbsp;<a target='_blank' href='file:///" + strPath + "/" + strErrLogName + "'>");
+    document.write("View Error Log</a></p></div>");
+  }
+  else
+  {
+    document.write("</div>");
+  }
+
+  document.write("<ol style='list-style-type: decimal; clear:both;'><p style='font-weight:bold; margin-left:-20px;'>");
+  document.write("Troubleshooting Tips</p>");
+  document.write("<li>For information on known setup issues, see Microsoft Visual Studio readme file, ");
+  document.write("<a target='_blank' href='file:///" + strReadmePath + "/readme.htm'>readme.htm</a>");
+  document.write(" located at the root of the installation sources</li>");
+  document.write("<li>Visit <a target='_blank' href='http://msdn.microsoft.com/en-us/vstudio/cc136615.aspx'>");
+  document.write("Microsoft Help and Support</a> site for Knowledge Base articles on troubleshooting the installation of Visual Studio 2010.</li><li>To find Help from other Visual Studio Users, try the following newsgroups:</li>");
+  document.write("<ul style='list-style-type:circle; margin-left:20px;'><li>");
+  document.write("<a target='_blank' href='http://go.microsoft.com/fwlink/?LinkID=151190'>Visual Studio Setup</a></li><li>");
+  document.write("<a target='_blank' href='http://go.microsoft.com/fwlink/?LinkID=151198'>Microsoft Product Support</a></li></ul><li>For details about this setup failure, see the setup ");
+  document.write("<a target='_blank' href='file:///" + strPath + "/" + strLogName + "'>");
+  document.write("log file</a>.</li></ol>");
+  document.write("</td></tr></table>");
+    
+</SCRIPT>
+
+<noscript id="failed.htm_4814">
+<table width="100%" id="failed.htm_4826">
+<tr id="failed.htm_4848"><td width=36 id="failed.htm_4852"><img src="smallFail.gif" id="failed.htm_4865"></td>
+	<td id="failed.htm_4898"><font size=4 color="red" id="failed.htm_4902"><b id="failed.htm_4927">Setup Failed.</b></font></td>
+</tr>
+</table>
+<img src="redrule.gif" width="100%" height=4 id="failed.htm_4978"><br id="failed.htm_5023"><br id="failed.htm_5027">
+   <ol id="failed.htm_5036">
+   <li id="failed.htm_5045">For information on known setup issues, see the Microsoft Visual Studio readme,  Readme.htm, located at the root of the installation source.
+   <li id="failed.htm_5204">Visit <a target="_blank" href="http://go.microsoft.com/fwlink/?LinkId=127713">Microsoft Help and Support</a> site for Knowledge Base article on troubleshooting the installation of Visual Studio 2010. 
+   <li id="failed.htm_5475">To find help from other Visual Studio users, see the following newsgroups:
+   <ul id="failed.htm_5558">
+   <li id="failed.htm_5567"><a target='_blank' href='http://go.microsoft.com/fwlink/?LinkID=151190' id="failed.htm_5571">Visual Studio Setup</a>
+   <li id="failed.htm_5762"><a target='_blank' href='http://go.microsoft.com/fwlink/?LinkID=151198' id="failed.htm_5766">Microsoft Product Support</a>
+   </ul>
+   <li id="failed.htm_5865">For details about this setup failure, see the setup log file <b id="failed.htm_5931">dd_install_vs_*_100.txt</b> in the %TEMP% folder.
+   </ol>
+</noscript>
+</body>
+</html>
+
+
