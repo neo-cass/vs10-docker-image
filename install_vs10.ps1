@@ -27,12 +27,24 @@ function Assert-Dism([string]$Feature) {
     }
 }
 Write-Host "Enabling .NET 3.5"
-# /Enable-Feature routes NetFx3 through the legacy Windows Feature mapping
-# (CBS state "NetFx3ServerFeatures") before it can be acquired; /Add-Capability
-# is the mechanism Microsoft's own container docs use for FOD on 2022+ and may
-# not hit the same path.
-dism.exe /online /Add-Capability /CapabilityName:NetFx3
-Assert-Dism "NetFx3"
+# Both DISM verbs (/Enable-Feature and /Add-Capability) route NetFx3 through the
+# same Windows-Update-backed FOD acquirer, which stalls indefinitely on this
+# runner (confirmed via CBS.log: FCAcquirerWUClient download never progresses
+# past 0 bytes, regardless of verb). The standalone .NET Framework 3.5 SP1
+# redistributable predates the Feature-on-Demand model and is a self-contained
+# installer, not a DISM wrapper, so it doesn't touch WU at all.
+Invoke-WebRequest -Uri "https://download.visualstudio.microsoft.com/download/pr/b635098a-2d1d-4142-bef6-d237545123cb/2651b87007440a15209cac29634a4e45/dotnetfx35.exe" -OutFile "C:\build\dotnetfx35.exe"
+$proc = Start-Process -FilePath "C:\build\dotnetfx35.exe" -ArgumentList '/q', '/norestart' -Wait -PassThru
+Remove-Item "C:\build\dotnetfx35.exe" -Force
+if ($proc.ExitCode -ne 0 -and $proc.ExitCode -ne 3010) {
+    # This bootstrapper logs to %TEMP%\dd_dotnetfx35*.txt, not the DISM log paths.
+    Write-Host "--- dotnetfx35 logs ---"
+    Get-ChildItem "$env:TEMP\dd_dotnetfx35*" -ErrorAction SilentlyContinue | ForEach-Object {
+        Write-Host "--- $($_.Name) ---"
+        Get-Content $_.FullName -ErrorAction SilentlyContinue
+    }
+    throw "dotnetfx35.exe failed to install .NET 3.5 (exit code $($proc.ExitCode))."
+}
 Write-Host "Enabling .NET 4.0"
 dism.exe /online /enable-feature /featurename:NetFx4 /All
 Assert-Dism "NetFx4"
