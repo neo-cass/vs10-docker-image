@@ -1,5 +1,8 @@
 
 
+# Container OS revision. The host revision is printed by the workflow;
+# CBS servicing is sensitive to skew between the two.
+Write-Host "Container UBR: $((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').UBR)"
 # Disable Program Compatibility Assistant to avoid VS2010 install hanging indefinitely due to popups
 Write-Host "Disabling Program Compatibility Assistant"
 Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Compatibility Assistant' -Name "DisablePCA" -Value 1 -Type DWord

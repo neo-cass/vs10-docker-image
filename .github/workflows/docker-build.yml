@@ -20,6 +20,14 @@ jobs:
     timeout-minutes: 350
 
     steps:
+      # Host OS revision. Must run on the runner, not inside the build: the
+      # container has its own registry and would report the image's revision.
+      - name: Host OS revision
+        shell: pwsh
+        run: |
+          $cv = Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'
+          Write-Host "Host: $($cv.CurrentBuildNumber).$($cv.UBR)"
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
