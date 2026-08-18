@@ -18,6 +18,11 @@ function Assert-Dism([string]$Feature) {
         Select-String -Path C:\Windows\Logs\DISM\dism.log -Pattern 'Error|Failed' -ErrorAction SilentlyContinue | Select-Object -Last 40
         Write-Host "--- dism.log (tail) ---"
         Get-Content C:\Windows\Logs\DISM\dism.log -Tail 60 -ErrorAction SilentlyContinue
+        # dism.log only shows the eventual timeout, not what CBS was doing during
+        # the silent Internal_Finalize hang. cbs.log is far more verbose and is
+        # where that gap should actually show up.
+        Write-Host "--- CBS.log (tail) ---"
+        Get-Content C:\Windows\Logs\CBS\CBS.log -Tail 200 -ErrorAction SilentlyContinue
         throw "DISM failed to enable $Feature (exit code $LASTEXITCODE)."
     }
 }
