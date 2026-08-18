@@ -27,7 +27,11 @@ function Assert-Dism([string]$Feature) {
     }
 }
 Write-Host "Enabling .NET 3.5"
-dism.exe /online /enable-feature /featurename:NetFx3 /All
+# /Enable-Feature routes NetFx3 through the legacy Windows Feature mapping
+# (CBS state "NetFx3ServerFeatures") before it can be acquired; /Add-Capability
+# is the mechanism Microsoft's own container docs use for FOD on 2022+ and may
+# not hit the same path.
+dism.exe /online /Add-Capability /CapabilityName:NetFx3
 Assert-Dism "NetFx3"
 Write-Host "Enabling .NET 4.0"
 dism.exe /online /enable-feature /featurename:NetFx4 /All
