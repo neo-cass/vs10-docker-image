@@ -1,4 +1,7 @@
-FROM  mcr.microsoft.com/windows/server:ltsc2022
+# Pinned to the revision of the GitHub Actions windows-2022 host (20348.5386).
+# The moving ltsc2022 tag resolves newer than the host kernel, which makes CBS
+# servicing (DISM /enable-feature) hang and time out with 0x800705b4.
+FROM  mcr.microsoft.com/windows/server:10.0.20348.5386
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
 RUN "mkdir C:\build"
