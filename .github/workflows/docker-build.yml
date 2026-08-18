@@ -20,14 +20,6 @@ jobs:
     timeout-minutes: 350
 
     steps:
-      - name: Free up disk space
-        shell: pwsh
-        run: |
-          # Standard hosted runners ship ~14 GB free. Drop the pre-cached
-          # .NET Framework container images to reclaim several GB.
-          docker image prune -a -f
-          Get-PSDrive C | Select-Object Used, Free
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
